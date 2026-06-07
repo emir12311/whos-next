@@ -1,7 +1,7 @@
 # Who's Next? | Sıradaki Kim?
 A student picker | Bir öğrenci seçici
 
-[Türkçe](#turkce) | [English](#english)
+[English](#english) | [Türkçe](#turkce)
 
 ## Türkçe
 Sıradaki Kim?, Pardus kullanan sınıf bilgisayarları ve tahtalar için hazırlanmış bir öğrenci seçme uygulamasıdır. Sınıf listesini PDF olarak yükleyip kolu çekerek rastgele öğrenci seçebilirsiniz.
