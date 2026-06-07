@@ -1,34 +1,34 @@
-# Who's Next?
+# Who's Next? | Sıradaki Kim?
+A student picker | Bir öğrenci seçici
 
-[Turkce](#turkce) | [English](#english)
+[English](#english) | [Türkçe](#turkce)
 
-## Turkce
+## Türkçe
+Sıradaki Kim?, Pardus kullanan sınıf bilgisayarları ve tahtalar için hazırlanmış bir öğrenci seçme uygulamasıdır. Sınıf listesini PDF olarak yükleyip kolu çekerek rastgele öğrenci seçebilirsiniz.
 
-Who's Next?, Pardus kullanan sinif bilgisayarlari ve tahtalar icin hazirlanmis bir ogrenci secme uygulamasidir. Sinif listesini PDF olarak yukleyip kolu cekerek rastgele ogrenci secebilirsiniz.
+### Özellikler
 
-### Ozellikler
+- PDF sınıf listesinden öğrenci okuma
+- Kolu çekerek seçim yapılan arayüz
+- Türkçe ve Ingilizce dil desteği
+- Normal kullanıcılar için AppImage sürümü
+- Sınıf tahtalarına kurulum için `install.sh`
+- GitHub Releases üzerinden güncelleme paketi desteği
 
-- PDF sinif listesinden ogrenci okuma
-- Kolu cekerek secim yapilan arayuz
-- Turkce ve Ingilizce dil destegi
-- Normal kullanicilar icin AppImage surumu
-- Sinif bilgisayarlarina kurulum icin `install.sh`
-- GitHub Releases uzerinden guncelleme paketi destegi
+### AppImage Kullanımı
 
-### AppImage Kullanimi
-
-Root yetkisi gerektirmeden calistirmak icin AppImage dosyasini kullanin:
+Root yetkisi gerektirmeden çalıştırmak için AppImage dosyasını kullanın:
 
 ```bash
 chmod +x WhosNext-1.0.0-x86_64.AppImage
 ./WhosNext-1.0.0-x86_64.AppImage
 ```
 
-AppImage surumu kendi icinden guncelleme yapmaz. Yeni surum ciktiginda GitHub Releases uzerinden yeni AppImage dosyasini indirmeniz gerekir.
+AppImage sürümü kendi içinden güncelleme yapmaz. Yeni sürüm çıktığında GitHub Releases üzerinden yeni AppImage dosyasını indirmeniz gerekir.
 
 ### Sistem Kurulumu
 
-Sinif bilgisayarina paylasimli kurulum yapmak icin:
+Sınıf tahtalarına paylaşımlı kurulum yapmak için:
 
 ```bash
 sudo ./install.sh
@@ -36,36 +36,31 @@ sudo ./install.sh
 
 Bu kurulum:
 
-- uygulamayi `/opt/whos-next` altina kopyalar
-- sanal ortam olusturur
-- bagimliliklari kurar
-- mevcut kullanicilari uygulama grubuna ekler
-- masaustu kisayollarini mevcut ve yeni kullanicilar icin olusturur
+- Uygulamayı `/opt/whos-next` altına kopyalar
+- Sanal ortam oluşturur
+- Kütüphaneleri kurar
+- Mevcut kullanıcıları uygulama grubuna ekler
+- Masaüstü kısayollarını mevcut ve yeni kullanıcılar için olusturur
 
-### Guncelleme ve Release
+### Güncelleme
 
-Surum numarasi `VERSION` dosyasindan okunur.
+Sürüm numarası `VERSION` dosyasından okunur.
 
-Zip guncelleme paketi olusturmak icin:
+Zip güncelleme paketi oluşturmak için:
 
 ```bash
 ./build_release_bundle.sh
 ```
 
-AppImage olusturmak icin:
+AppImage oluşturmak için:
 
 ```bash
 ./build_appimage.sh
 ```
 
-GitHub Releases icin yuklenecek dosyalar:
+### Geliştirme Notu
 
-- `dist/whos-next.zip`
-- `dist/WhosNext-<version>-x86_64.AppImage`
-
-### Gelistirme Notu
-
-Bu proje okul kullanimina yonelik olarak hazirlandi ve gelistirme surecinde yogun AI destegi kullanildi. Kod ve dagitim akisinin son hali manuel olarak duzenlendi ve dagitim amacina gore uyarlandi.
+*Bu proje okul kullanımına yönelik olarak hazırlandı ve geliştirme sürecinde AI desteği kullanıldı. Kod ve dağıtım akışının son hali manuel olarak düzenlendi ve dağıtım amacına göre uyarlandı.*
 
 ## English
 
@@ -123,11 +118,6 @@ To build the AppImage:
 ./build_appimage.sh
 ```
 
-Files to upload to GitHub Releases:
-
-- `dist/whos-next.zip`
-- `dist/WhosNext-<version>-x86_64.AppImage`
-
 ### Development Note
 
-This project was built for school use and was developed with heavy AI assistance. The final code and release flow were manually cleaned up and adapted for real deployment.
+*This project was built for school use and was developed with AI assistance. The final code and release flow were manually cleaned up and adapted for real deployment.*
