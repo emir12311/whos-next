@@ -17,11 +17,20 @@ PAYLOAD_DIR="${APPDIR}/usr/lib/${APP_ID}"
 BIN_DIR="${APPDIR}/usr/bin"
 DESKTOP_DIR="${APPDIR}/usr/share/applications"
 ICON_DIR="${APPDIR}/usr/share/icons/hicolor/512x512/apps"
-VENV_DIR="${PAYLOAD_DIR}/.venv"
+PYTHON_DIR="${PAYLOAD_DIR}/python"
 REQ_FILE="${PROJECT_DIR}/requirements.txt"
 VENDOR_DIR="${PROJECT_DIR}/vendor"
 APPIMAGETOOL="${APPIMAGETOOL:-${PROJECT_DIR}/tools/appimagetool-${ARCH}.AppImage}"
 APPIMAGETOOL_URL="https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-${ARCH}.AppImage"
+
+# Bundled relocatable CPython (python-build-standalone). A venv created here
+# would only symlink to the build machine's /usr/bin/python3 and carry no
+# stdlib, so the AppImage would silently require the host to have the exact
+# same interpreter version. Bundling a standalone interpreter avoids that.
+PYTHON_VERSION="${PYTHON_VERSION:-3.11.16}"
+PYTHON_STANDALONE_RELEASE="${PYTHON_STANDALONE_RELEASE:-20260901}"
+PYTHON_TARBALL_NAME="cpython-${PYTHON_VERSION}+${PYTHON_STANDALONE_RELEASE}-${ARCH}-unknown-linux-gnu-install_only.tar.gz"
+PYTHON_URL="https://github.com/astral-sh/python-build-standalone/releases/download/${PYTHON_STANDALONE_RELEASE}/${PYTHON_TARBALL_NAME}"
 
 if ! command -v python3 >/dev/null 2>&1; then
   echo "python3 is required."
@@ -30,6 +39,11 @@ fi
 
 if ! command -v rsync >/dev/null 2>&1; then
   echo "rsync is required."
+  exit 1
+fi
+
+if ! command -v curl >/dev/null 2>&1; then
+  echo "curl is required."
   exit 1
 fi
 
@@ -56,12 +70,30 @@ rsync -a \
   --exclude 'tools' \
   "${PROJECT_DIR}/" "${PAYLOAD_DIR}/"
 
-python3 -m venv "${VENV_DIR}"
-"${VENV_DIR}/bin/pip" install --upgrade pip
+# Fetch and unpack the standalone interpreter into the payload.
+PYTHON_TARBALL="${PROJECT_DIR}/tools/${PYTHON_TARBALL_NAME}"
+if [[ ! -f "${PYTHON_TARBALL}" ]]; then
+  echo "Fetching standalone CPython ${PYTHON_VERSION}..."
+  curl -fL "${PYTHON_URL}" -o "${PYTHON_TARBALL}"
+fi
+
+rm -rf "${PYTHON_DIR}"
+EXTRACT_DIR="$(mktemp -d)"
+tar -xzf "${PYTHON_TARBALL}" -C "${EXTRACT_DIR}"
+mv "${EXTRACT_DIR}/python" "${PYTHON_DIR}"
+rm -rf "${EXTRACT_DIR}"
+
+PYTHON_BIN="${PYTHON_DIR}/bin/python3"
+if [[ ! -x "${PYTHON_BIN}" ]]; then
+  echo "Bundled interpreter is missing: ${PYTHON_BIN}"
+  exit 1
+fi
+
+"${PYTHON_BIN}" -m pip install --upgrade pip --quiet
 if [[ -d "${VENDOR_DIR}" ]] && find "${VENDOR_DIR}" -maxdepth 1 -type f | grep -q .; then
-  "${VENV_DIR}/bin/pip" install --no-index --find-links "${PAYLOAD_DIR}/vendor" -r "${REQ_FILE}"
+  "${PYTHON_BIN}" -m pip install --no-index --find-links "${PAYLOAD_DIR}/vendor" -r "${REQ_FILE}"
 else
-  "${VENV_DIR}/bin/pip" install -r "${REQ_FILE}"
+  "${PYTHON_BIN}" -m pip install -r "${REQ_FILE}"
 fi
 
 cat > "${BIN_DIR}/${APP_ID}" <<EOF
@@ -69,7 +101,7 @@ cat > "${BIN_DIR}/${APP_ID}" <<EOF
 set -euo pipefail
 HERE="\$(cd "\$(dirname "\${BASH_SOURCE[0]}")/../lib/${APP_ID}" && pwd)"
 cd "\${HERE}"
-exec "\${HERE}/.venv/bin/python" "\${HERE}/app.py"
+exec "\${HERE}/python/bin/python3" "\${HERE}/app.py"
 EOF
 chmod 755 "${BIN_DIR}/${APP_ID}"
 
